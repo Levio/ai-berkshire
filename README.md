@@ -160,23 +160,54 @@ AI Berkshire 确保：**同样的输入 → 结构一致、深度一致的输出
 > 图源：[`assets/architecture.mmd`](assets/architecture.mmd)（Mermaid 可编辑源码）
 
 **三层设计哲学**：
-- **Skill 层**：把"你要做什么"抽象成 7 个明确入口——深度研究、快速筛选、行业扫描、漏斗筛选、未上市公司、异动归因，按场景选用
+- **Skill 层**：把"你要做什么"抽象成 16 个明确入口——深度研究、财报分析、行业筛选、持仓管理、思维工具，按场景选用
 - **Agent 层**：每个 skill 内部都是 4 个 Agent 并行——它们各自独立搜索、独立判断、互相挑战，最后由 Team Lead 综合
 - **工具层**：精确计算、实时检索、报告抽检——保证每份报告的数据严谨性可验证
 
 ---
 
-## Skills 一览
+## Skills 一览（16个）
+
+### 🔬 深度研究类
 
 | Skill | 用途 | 适合场景 |
 |-------|------|---------|
 | [`/investment-research`](skills/investment-research.md) | 四大师综合深度分析 | 对一家上市公司进行全方位投资研究 |
-| [`/investment-team`](skills/investment-team.md) | 多Agent并行投研团队 | 需要更快速、多角度同时分析 |
-| [`/investment-checklist`](skills/investment-checklist.md) | 巴菲特买入前 Checklist | 快速筛选，决定是否值得深入研究 |
-| [`/industry-research`](skills/industry-research.md) | 产业链全景扫描 | 研究一个行业/主题的全部投资机会 |
+| [`/investment-team`](skills/investment-team.md) | 多Agent并行投研团队 | 4个Agent并行研究，最快速、最全面 |
+| [`/management-deep-dive`](skills/management-deep-dive.md) | 管理层纵深研究 | "买股票就是买人"——当管理层是核心变量时深挖 |
+| [`/private-company-research`](skills/private-company-research.md) | 未上市公司深度研究 | 研究蚂蚁、SpaceX等信息稀缺的未上市公司 |
+| [`/deep-company-series`](skills/deep-company-series.md) | 8篇长文系列拆一家公司 | 公众号级深度系列，12万字从认知重置到决策闭环 |
+
+### 📊 财报分析类
+
+| Skill | 用途 | 适合场景 |
+|-------|------|---------|
+| [`/earnings-review`](skills/earnings-review.md) | 财报精读（一手资料） | 只读原始财报，不依赖二手研报，像巴菲特一样读年报 |
+| [`/earnings-team`](skills/earnings-team.md) | 财报精读团队 + 公众号发布 | 四大师并行解读财报 → 编辑润色 → 读者评审 → 可发布文章 |
+
+### 🏭 行业筛选类
+
+| Skill | 用途 | 适合场景 |
+|-------|------|---------|
+| [`/industry-research`](skills/industry-research.md) | 产业链全景扫描 | 研究一个行业的全部投资机会（按产业链环节切片） |
 | [`/industry-funnel`](skills/industry-funnel.md) | 行业漏斗筛选 | 全市场 → 粗筛 ≤10 家 → 终选 3 家深度分析 |
-| [`/private-company-research`](skills/private-company-research.md) | 未上市公司深度研究 | 研究蚂蚁、SpaceX等未上市公司 |
-| [`/news-pulse`](skills/news-pulse.md) | 股价异动新闻归因 | 股价大涨/大跌时10分钟搞清"发生了什么" |
+| [`/quality-screen`](skills/quality-screen.md) | 去劣筛选（7条硬指标） | 快速排除非一流公司，支持个股/行业/指数/主题批量筛 |
+| [`/investment-checklist`](skills/investment-checklist.md) | 巴菲特买入前 Checklist | 六关快速筛选，10分钟决定是否值得深入 |
+
+### 📈 持仓管理类
+
+| Skill | 用途 | 适合场景 |
+|-------|------|---------|
+| [`/portfolio-review`](skills/portfolio-review.md) | 组合管理与优化 | 从"研究公司"升级到"管理组合"——仓位、集中度、再平衡 |
+| [`/thesis-tracker`](skills/thesis-tracker.md) | 投资论文追踪 | 买入后的纪律系统：持续跟踪论文是否被证伪 |
+| [`/news-pulse`](skills/news-pulse.md) | 股价异动快速归因 | 股价大涨/大跌时10分钟搞清"发生了什么" |
+
+### 🧠 思维工具类
+
+| Skill | 用途 | 适合场景 |
+|-------|------|---------|
+| [`/dyp-ask`](skills/dyp-ask.md) | 段永平问答 | 以段永平的方式思考任何问题——商业、投资、人生 |
+| [`/financial-data`](skills/financial-data.md) | 财务数据获取与交叉验证规范 | 确保关键数据来自2个独立来源，误差>1%告警 |
 
 ---
 
@@ -204,13 +235,31 @@ cp ai-berkshire/skills/*.md ~/.claude/commands/
 
 在 Claude Code 中直接调用：
 
-```
+```bash
+# 深度研究
 /investment-research 腾讯
-/investment-checklist 茅台, 英伟达, 苹果
+/investment-team 美团
+/management-deep-dive 王兴 美团
+/private-company-research SpaceX
+/deep-company-series 拼多多
+
+# 财报分析
+/earnings-review 腾讯 2025Q4
+/earnings-team PDD 2025年报
+
+# 行业筛选
 /industry-research 核电
 /industry-funnel AI算力
-/investment-team 美团
-/private-company-research SpaceX
+/quality-screen 恒生指数成分股
+/investment-checklist 茅台, 英伟达, 苹果
+
+# 持仓管理
+/portfolio-review 腾讯30%, 美团20%, 茅台20%, 现金30%
+/thesis-tracker 拼多多
+/news-pulse 腾讯
+
+# 思维工具
+/dyp-ask 拼多多的护城河到底在哪里？
 ```
 
 ---
@@ -536,15 +585,20 @@ cp ai-berkshire/skills/*.md ~/.claude/commands/
 
 ## 项目路线图
 
-- [x] 四大师综合分析框架
-- [x] 多Agent并行投研团队
-- [x] 巴菲特买入前 Checklist
-- [x] 产业链全景扫描
-- [x] 未上市公司研究框架
+- [x] 四大师综合分析框架（`/investment-research`）
+- [x] 多Agent并行投研团队（`/investment-team`）
+- [x] 巴菲特买入前 Checklist（`/investment-checklist`）
+- [x] 产业链全景扫描（`/industry-research` + `/industry-funnel`）
+- [x] 未上市公司研究框架（`/private-company-research`）
 - [x] 金融严谨性工具（精确算术、市值验算、多源交叉验证、Benford定律检测）
 - [x] 股价异动快速归因（`/news-pulse` 4 维并行侦察）
-- [ ] 港股/A股/美股财报自动解读
-- [ ] 投资组合跟踪与再平衡
+- [x] 财报精读（`/earnings-review` + `/earnings-team` 四大师并行解读）
+- [x] 投资组合管理（`/portfolio-review` 仓位审视与再平衡）
+- [x] 投资论文追踪（`/thesis-tracker` 买入后纪律系统）
+- [x] 管理层纵深研究（`/management-deep-dive`）
+- [x] 去劣快速筛选（`/quality-screen` 7条硬指标排除）
+- [x] 段永平思维模拟（`/dyp-ask`）
+- [x] 深度系列长文（`/deep-company-series` 8篇12万字）
 - [ ] 历史回测：AI研报 vs 实际股价表现
 - [ ] 宏观经济周期分析框架
 - [ ] 基于MCP的实时数据接入（Wind/Bloomberg/Yahoo Finance）
