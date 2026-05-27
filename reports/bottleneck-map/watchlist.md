@@ -1,7 +1,7 @@
 # 瓶颈猎手观察名单（持续更新）
 
-最后更新：2026-05-27 午后扫描（第十九轮 — Nittobo FY2026实际P/E确认24.2x；WF6库存1-2月临界；Aixtron Q2拐点确认；钨价分化警示；Chemring £47M新合同）  
-下次复查：June 9 Chemring半年财报
+最后更新：2026-05-27 11:06 扫描（第二十轮 — 无新信号；全部watchlist公司无状态变化；Centrus DOE续约结构确认但无新公告；钇2月小幅回升20吨/月；June 9双重催化剂倒计时13天）  
+下次复查：June 9 Chemring半年财报 + Almonty Phase 2投票
 
 ---
 
