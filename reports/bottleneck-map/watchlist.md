@@ -1045,3 +1045,33 @@ NF₃主要客户：TSMC、Samsung、Micron、Kioxia、Rapidus——几乎覆盖
 - Russell 1000/3000 纳入 **6月29日**（21天后）
 - 中国MRL矿产资源法 **6月15日** 生效——钨战略矿产管控框架进一步锁死
 
+**【2026-06-08 17:00 事实修正】**
+- **Phase 2投票事实修正**：Phase 2扩产处理量至120万吨/年的决策是管理层/董事会执行权限，**不是AGM股东投票议案**；明日AGM正式议案为：7名董事席位、董事选举、审计师确认、股权激励计划——属常规事项
+- **明日AGM观察要点**：①无异议股东/激进投资者行动；②Q1 Sangdong生产数据（如披露）处理量是否接近Phase 1设计64万吨/年；③CB结算完成后北美市场ALM股价反应
+
+---
+
+## 【2026-06-08 17:00 观察名单更新】
+
+### 3110.T（Nittobo）★★★★ — 四月涨价新数据 + CoWoP中期风险首录
+
+**【2026-06-08 17:00 两项更新】**
+
+**①价格数据补充（正向）**：
+- 2025年8月：全产品线涨价 **+20%**
+- 2026年4月：再次涨价 **+20-30%**（新数据，首次入库）
+- 累计两轮涨幅：综合+40%以上
+- 传导路径：T-glass涨价 → 1季度后BT基板 → 2季度后ABF基板
+- **意义**：Q4 2026-Q1 2027 ABF基板涨价预期差将强化Nittobo论点；8/5财报分析师模型未完整反映此利润率改善
+- 来源：TrendForce Insights《Glass Fiber Cloth: The Underlying Material Shortage in AI Infrastructure》
+
+**②CoWoP中期风险（新增risk checklist项）**：
+- 技术路线：CoWoP = interposer直接焊至高密度PCB → 绕过ABF有机基板层
+- Nvidia目标：Rubin GR150，late 2026 pilot → 2028大规模量产
+- **为什么2026-2027不影响3110.T**：①Blackwell/Vera Rubin Ultra仍用CoWoS；②CoWoP面临翘曲（warpage）风险，良率未验证；③Nittobo和TSMC是CoWoP配套高密度PCB也需要升级版玻纤布（CTE更低）
+- **2028+风险**："ABF垄断2027年起开始裂边，2028-2032年逐步转型"
+- **应对**：关注Nittobo次代T-glass（2028，CTE 2.8→2.0）能否适配CoWoP用高密度PCB；若能适配则CoWoP是3110.T需求的平行路径而非威胁
+- 来源：GlobalSMT / The Vick's Newsletter / TweakTown
+
+**评级维持★★★★**，CoWoP为2028+风险注记，不影响2026-2027投资论点
+
