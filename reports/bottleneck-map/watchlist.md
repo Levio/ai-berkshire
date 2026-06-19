@@ -6029,3 +6029,29 @@ Kanto Denka Kogyo 7/1永久停止WF6生产，**投资论点核心为NF3，而非
 4. **6/29 ALM Russell纳入**：观察被动资金买入效应
 
 *来源：本轮见 reports/bottleneck-map/2026-06-19/16-00-信号扫描.md；SeekingAlpha Q1 Centrus highlights；GlobeNewsWire 2026-06-11（Veeco Ennostar）；NaturalNews 2026-06-19（WF6主流媒体）*
+
+---
+
+## 状态快照（2026-06-19 21:00 — 第244轮扫描）
+
+本轮无新信号，不生成报告文件。
+
+**覆盖范围**：五大超级趋势全面搜索；中英文双语；watchlist全部标的状态核查。
+
+**各方向结论**：
+- WF6（Kanto Denka/Foosung）：无新进展，已由20:00扫描完整覆盖
+- InP/EML：无新进展，Coherent Sherman TX扩产进度不变
+- HVLP4铜箔：无新进展，Goldman Sachs 3年缺口结论已于6/12入库
+- HBM/CoWoS：状态不变
+- HALEU/Centrus：Oklo LOI（6/18）已记录，DOE Option 1b无新公告
+- SRM/国防：DPA June 11 Presidential Determination已于15:00扫描记录
+- ABF/稀土/钨/氦气：全部状态不变
+
+**倒计时（本轮更新）**：
+
+| 事件 | 截止日 | T-days | 标的 | 状态 |
+|------|--------|--------|------|------|
+| DOE Option 1b决策 | 6/30 | T-11 | LEU | 无新公告，每日监控 |
+| Kanto Denka永久停产 | 7/1 | T-12 | 4047.T/Foosung | 无新进展 |
+| ICL 72h监察到期 | 6/20 | T-1 | ICL | 溴价未破红线，明日结束 |
+| Nittobo 5:1拆股 | 6/29 | T-10 | 3110.T | 无变化 |
