@@ -247,6 +247,18 @@ Windows 用户可使用官方 PowerShell 安装命令：`powershell -ExecutionPo
 
 如果 `codex --version` 能正常输出版本号，就可以继续安装本项目的 Codex skills。
 
+#### 减少授权确认
+
+这些 skills 会频繁调用工具，Claude Code 默认会逐次请求授权确认。这个行为来自 Claude Code 客户端权限机制，不是本仓库可以修改的默认设置。
+
+如果你信任当前 workflow，并且在可信环境中运行，可以用 Claude Code 的跳过权限确认模式启动：
+
+```bash
+claude --dangerously-skip-permissions
+```
+
+注意：该模式会关闭 Claude Code 的工具审批保护，只应在你信任仓库、命令和工作目录的情况下使用。
+
 ### 2. 安装 Skills
 
 Claude Code 用户安装：

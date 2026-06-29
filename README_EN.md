@@ -248,6 +248,18 @@ Windows users can use the official PowerShell installer: `powershell -ExecutionP
 
 If `codex --version` prints a version, you can continue with this project's Codex skills installation.
 
+#### Reducing Approval Prompts
+
+These skills issue many tool calls, and Claude Code asks for approval for each one by default. That behavior comes from Claude Code's client-side permission system; it is not a repository default this project can change.
+
+If you trust the current workflow and are running in a trusted environment, start Claude Code in skip-permissions mode:
+
+```bash
+claude --dangerously-skip-permissions
+```
+
+Warning: this disables Claude Code's tool-approval guardrails. Use it only when you trust the repository, commands, and working directory.
+
 ### 2. Install Skills
 
 For Claude Code users:
