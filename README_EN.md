@@ -12,6 +12,8 @@ English | [中文](README.md)
 
 One person + Claude Code / Codex = an entire investment research team.
 
+[Track Record](#real-track-record) · [Why Not Just Ask AI?](#why-cant-you-just-ask-ai-directly) · [Skills](#skills-overview-18-skills) · [Quick Start](#quick-start) · [Reports](#live-research-reports) · [Design Philosophy](#design-philosophy)
+
 ---
 
 ## Real Track Record
@@ -165,7 +167,7 @@ Ask AI directly, and you have one context window. Four parallel Agents means 4×
 > Source: [`assets/architecture.mmd`](assets/architecture.mmd) (editable Mermaid diagram)
 
 **Three-Layer Design Philosophy**:
-- **Skill Layer**: Abstracts "what you want to do" into 16 clear entry points — deep research, earnings analysis, industry screening, portfolio management, and thinking tools. Pick by scenario.
+- **Skill Layer**: Abstracts "what you want to do" into 18 clear entry points — deep research, earnings analysis, industry screening, portfolio management, and thinking tools. Pick by scenario.
 - **Agent Layer**: Each skill runs 4 Agents in parallel — they search independently, judge independently, challenge each other, and the Team Lead synthesizes.
 - **Tool Layer**: Exact-precision calculations, real-time web search, report auditing — ensures every report's data is rigorous and verifiable.
 
@@ -322,7 +324,7 @@ Invoke directly in Claude Code:
 
 # Thinking Tools
 /dyp-ask Where is Pinduoduo's real moat?
-/wechat-article Explain OPD for large language models
+/wechat-article Meituan
 ```
 
 After installing for Codex, restart Codex and refer to skills by name, for example:
@@ -332,7 +334,7 @@ Use investment-research to research Tencent
 Use earnings-review to analyze PDD 2025 annual results
 Use industry-funnel to screen AI compute
 Use bottleneck-hunter to scan AI infrastructure bottlenecks
-Use wechat-article to write an OPD explainer for large language models
+Use wechat-article to write a Meituan investment article
 ```
 
 If you install Codex slash prompts, restart Codex and search for them in the `/` menu. Codex's official custom prompt entry point usually appears as `prompts:<name>`, for example:
@@ -664,22 +666,8 @@ The four masters aren't just dividing labor — they're designed to **challenge 
 
 ---
 
-## Roadmap
+## Future Directions
 
-- [x] Four-master comprehensive analysis framework (`/investment-research`)
-- [x] Multi-Agent parallel research team (`/investment-team`)
-- [x] Buffett pre-buy checklist (`/investment-checklist`)
-- [x] Industry value chain scan (`/industry-research` + `/industry-funnel`)
-- [x] Private company research framework (`/private-company-research`)
-- [x] Financial rigor tools (exact arithmetic, market cap verification, multi-source cross-validation, Benford's Law)
-- [x] Price-move rapid attribution (`/news-pulse` with 4-dimensional parallel recon)
-- [x] Earnings deep read (`/earnings-review` + `/earnings-team` four-master parallel interpretation)
-- [x] Portfolio management (`/portfolio-review` — position review & rebalancing)
-- [x] Investment thesis tracker (`/thesis-tracker` — post-buy discipline system)
-- [x] Management deep dive (`/management-deep-dive`)
-- [x] Quality screen (`/quality-screen` — 7 hard metrics rapid elimination)
-- [x] Duan Yongping thinking simulator (`/dyp-ask`)
-- [x] Deep company series (`/deep-company-series` — 8-part, ~120K words)
 - [ ] Historical backtesting: AI research reports vs. actual stock price performance
 - [ ] Macroeconomic cycle analysis framework
 - [ ] Real-time data feeds via MCP (Wind / Bloomberg / Yahoo Finance)
