@@ -1,5 +1,7 @@
 English | [中文](README.md)
 
+[![GitHub Trending](https://trendshift.io/api/badge/repositories/63696)](https://trendshift.io/repositories/63696)
+
 # AI Berkshire — Value Investing Research Framework for the AI Era
 
 > "Price is what you pay, value is what you get." — Warren Buffett
@@ -9,6 +11,16 @@ English | [中文](README.md)
 **AI Berkshire** is a collection of investment research skills compatible with both Claude Code and Codex. It systematizes the methodologies of four value investing masters — Buffett, Munger, Duan Yongping, and Li Lu — and delivers professional-grade research through AI Agents.
 
 One person + Claude Code / Codex = an entire investment research team.
+
+<p align="center">
+  <a href="https://trendshift.io/repositories/63696" target="_blank">
+    <img src="https://trendshift.io/api/badge/repositories/63696" alt="xbtlin/ai-berkshire | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
+  </a>
+</p>
+
+<p align="center">
+  <sub>Open-source milestone: AI Berkshire reached #1 on GitHub Trending on June 27, 2026.</sub>
+</p>
 
 ---
 

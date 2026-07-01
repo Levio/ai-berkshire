@@ -1,5 +1,7 @@
 中文 | [English](README_EN.md)
 
+[![GitHub Trending](https://trendshift.io/api/badge/repositories/63696)](https://trendshift.io/repositories/63696)
+
 # AI Berkshire - AI 时代的价值投资研究框架
 
 > "Price is what you pay, value is what you get." — Warren Buffett
@@ -9,6 +11,16 @@
 **AI Berkshire** 是一套同时兼容 Claude Code 与 Codex 的投资研究 Skill 合集，将巴菲特、芒格、段永平、李录四位价值投资大师的方法论系统化、结构化，通过 AI Agent 实现专业级投资研究。
 
 一个人 + Claude Code / Codex = 一个投研团队。
+
+<p align="center">
+  <a href="https://trendshift.io/repositories/63696" target="_blank">
+    <img src="https://trendshift.io/api/badge/repositories/63696" alt="xbtlin/ai-berkshire | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/>
+  </a>
+</p>
+
+<p align="center">
+  <sub>开源里程碑：AI Berkshire 曾于 2026-06-27 登上 GitHub Trending 第 1 位。</sub>
+</p>
 
 ---
 
