@@ -1,0 +1,31 @@
+services:
+  web-skill-runner:
+    build: .
+    image: ai-berkshire-web-skill-runner:latest
+    container_name: ai-berkshire-web-skill-runner
+    restart: unless-stopped
+    env_file:
+      - path: .env.docker
+        required: false
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./reports:/app/reports
+      - ai_berkshire_var:/var/lib/ai-berkshire
+      - claude_config:/home/appuser/.claude
+      - anthropic_config:/home/appuser/.config/anthropic
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  ai_berkshire_var:
+  claude_config:
+  anthropic_config:

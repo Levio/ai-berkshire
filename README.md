@@ -342,6 +342,92 @@ cd ai-berkshire
 /prompts:investment-research 腾讯
 ```
 
+### 4. 服务器 Web Runner（可选）
+
+如果希望把本项目部署到服务器，并通过浏览器选择和运行 Claude Code skills，可以使用内置的轻量 Web Runner。
+
+> 安全提醒：不要把未认证的 Web Runner 直接暴露到公网 IP。它会在服务器上调用 Claude Code，可能触发文件读写、网络访问和长时间 Agent 执行。生产环境请放在 HTTPS + Basic Auth / OAuth / 内网 VPN 后面。
+
+#### Docker Compose 部署（推荐）
+
+服务器上最简单的部署方式是 Docker Compose：
+
+```bash
+git clone https://github.com/xbtlin/ai-berkshire.git
+cd ai-berkshire
+cp .env.docker.example .env.docker
+# 编辑 .env.docker，填入 ANTHROPIC_API_KEY / ANTHROPIC_BASE_URL / CLAUDE_MODEL 等运行参数
+docker compose up -d --build
+```
+
+验证：
+
+```bash
+docker compose ps
+curl -fsS http://127.0.0.1:8000/health
+curl -fsS http://127.0.0.1:8000/api/skills
+```
+
+打开：
+
+```text
+http://服务器IP:8000
+```
+
+Docker 版会自动在容器启动时把 `skills/*.md` 同步到容器内 Claude Code commands 目录，并将报告持久化到宿主机 `./reports`。如果使用 DeepSeek token，请在 `.env.docker` 中设置 `ANTHROPIC_BASE_URL` 指向 Anthropic-compatible 网关，并设置 `CLAUDE_MODEL=deepseek-chat` 或 `deepseek-reasoner`。详细说明见 [`docs/docker-deployment.md`](docs/docker-deployment.md)。
+
+#### 安装依赖（非 Docker）
+
+```bash
+cd ai-berkshire
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
+
+#### 安装 Claude Code commands
+
+Web Runner 调用的是服务器运行用户的 Claude Code CLI，因此需要用同一个用户完成 Claude Code 登录，并安装 commands：
+
+```bash
+claude --version
+./scripts/install-claude-commands.sh
+```
+
+#### 启动 Web Runner
+
+```bash
+uvicorn server.app:app --host 0.0.0.0 --port 8080
+```
+
+打开：
+
+```text
+http://服务器IP:8080
+```
+
+页面会列出 `skills/*.md` 中的 skill。选择 skill、填写参数后，服务端会构造 `/{skill_name} {arguments}` 并用 Claude Code 非交互模式运行，日志会实时显示在页面上。
+
+#### 常用环境变量
+
+| 变量 | 默认值 | 说明 |
+|------|--------|------|
+| `AI_BERKSHIRE_ROOT` | 当前仓库根目录 | 项目路径 |
+| `AI_BERKSHIRE_VAR_DIR` | `server/var` | job 日志和运行时目录 |
+| `AI_BERKSHIRE_JOB_TIMEOUT` | `3600` | 单任务超时秒数 |
+| `AI_BERKSHIRE_MAX_ARGUMENT_LENGTH` | `4000` | 参数最大长度 |
+| `CLAUDE_CLI` | 自动查找 `claude` | Claude Code CLI 路径 |
+| `AI_BERKSHIRE_PERMISSION_MODE` | `default` | Claude Code permission mode |
+| `AI_BERKSHIRE_SKIP_PERMISSIONS` | `0` | 设为 `1` 会追加 `--dangerously-skip-permissions`，仅限可信环境 |
+
+#### 推荐 systemd + Nginx/Caddy 部署
+
+1. 创建专用低权限用户运行服务，不要用 root。
+2. 该用户执行 `claude` 登录和 `./scripts/install-claude-commands.sh`。
+3. systemd 启动 `uvicorn server.app:app --host 127.0.0.1 --port 8080`。
+4. 用 Nginx/Caddy 反代到 `127.0.0.1:8080`，开启 HTTPS 和访问认证。
+5. v1 默认串行运行任务；多任务并发前需先解决报告写入冲突、token 消耗和沙箱隔离。
+
 ---
 
 ## 各 Skill 详细介绍

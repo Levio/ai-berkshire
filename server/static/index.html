@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Berkshire Skill Runner</title>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #0f172a;
+      --panel: #111827;
+      --text: #e5e7eb;
+      --muted: #94a3b8;
+      --line: #334155;
+      --accent: #f59e0b;
+      --danger: #ef4444;
+      --ok: #22c55e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: linear-gradient(135deg, #0f172a, #111827 55%, #1f2937);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    main { max-width: 1100px; margin: 0 auto; padding: 32px 20px 56px; }
+    header { margin-bottom: 24px; }
+    h1 { margin: 0 0 8px; font-size: 32px; }
+    p { color: var(--muted); line-height: 1.6; }
+    .grid { display: grid; grid-template-columns: minmax(280px, 380px) 1fr; gap: 20px; }
+    .card {
+      background: rgba(17, 24, 39, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+    }
+    label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+    select, textarea, button {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: #020617;
+      color: var(--text);
+      padding: 11px 12px;
+      font: inherit;
+    }
+    textarea { min-height: 140px; resize: vertical; }
+    button {
+      cursor: pointer;
+      border: 0;
+      background: var(--accent);
+      color: #111827;
+      font-weight: 700;
+      margin-top: 14px;
+    }
+    button.secondary { background: #334155; color: var(--text); }
+    button:disabled { cursor: not-allowed; opacity: .55; }
+    .skill-desc { min-height: 90px; margin: 14px 0 0; font-size: 14px; }
+    .status { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--muted); }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .status.running .dot { background: var(--accent); }
+    .status.succeeded .dot { background: var(--ok); }
+    .status.failed .dot, .status.canceled .dot { background: var(--danger); }
+    pre {
+      height: 520px;
+      overflow: auto;
+      background: #020617;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      white-space: pre-wrap;
+      line-height: 1.5;
+      color: #cbd5e1;
+    }
+    .artifacts a { display: block; color: #fbbf24; margin: 8px 0; word-break: break-all; }
+    .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+    @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <h1>AI Berkshire Skill Runner</h1>
+      <p>选择一个 Claude Code Skill，填写参数，在服务器上运行并实时查看日志。生产环境请务必放在 HTTPS + 认证之后。</p>
+    </header>
+
+    <div class="grid">
+      <section class="card">
+        <label for="skill">Skill</label>
+        <select id="skill"></select>
+        <p id="skillDesc" class="skill-desc">正在加载 skills...</p>
+
+        <label for="arguments">参数</label>
+        <textarea id="arguments" placeholder="例如：腾讯&#10;或：腾讯 2025Q4"></textarea>
+
+        <button id="runBtn">运行 Skill</button>
+        <button id="cancelBtn" class="secondary" disabled>取消当前任务</button>
+      </section>
+
+      <section class="card">
+        <div class="row">
+          <span id="status" class="status"><span class="dot"></span><span>idle</span></span>
+          <span id="jobId" style="color: var(--muted); font-size: 13px;"></span>
+        </div>
+        <pre id="log">等待运行...</pre>
+        <div class="artifacts" id="artifacts"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const skillSelect = document.getElementById('skill');
+    const skillDesc = document.getElementById('skillDesc');
+    const argsInput = document.getElementById('arguments');
+    const runBtn = document.getElementById('runBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const statusEl = document.getElementById('status');
+    const jobIdEl = document.getElementById('jobId');
+    const logEl = document.getElementById('log');
+    const artifactsEl = document.getElementById('artifacts');
+
+    let skills = [];
+    let currentJobId = null;
+    let eventSource = null;
+
+    function setStatus(status) {
+      statusEl.className = `status ${status}`;
+      statusEl.querySelector('span:last-child').textContent = status;
+      cancelBtn.disabled = !currentJobId || !['queued', 'running'].includes(status);
+    }
+
+    function appendLog(line) {
+      if (logEl.textContent === '等待运行...') logEl.textContent = '';
+      logEl.textContent += `${line}\n`;
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function renderArtifacts(job) {
+      artifactsEl.innerHTML = '';
+      if (!job.artifacts || job.artifacts.length === 0) return;
+      const title = document.createElement('p');
+      title.textContent = '生成/更新的报告：';
+      artifactsEl.appendChild(title);
+      for (const artifact of job.artifacts) {
+        const link = document.createElement('a');
+        link.href = `/api/jobs/${job.id}/artifacts/${artifact.id}`;
+        link.textContent = artifact.name;
+        link.target = '_blank';
+        artifactsEl.appendChild(link);
+      }
+    }
+
+    async function loadSkills() {
+      const res = await fetch('/api/skills');
+      const data = await res.json();
+      skills = data.skills || [];
+      skillSelect.innerHTML = '';
+      for (const skill of skills) {
+        const option = document.createElement('option');
+        option.value = skill.name;
+        option.textContent = `/${skill.name} — ${skill.title}`;
+        skillSelect.appendChild(option);
+      }
+      updateSkillDesc();
+    }
+
+    function updateSkillDesc() {
+      const skill = skills.find(s => s.name === skillSelect.value);
+      skillDesc.textContent = skill ? skill.description : '未选择 Skill';
+    }
+
+    async function runJob() {
+      runBtn.disabled = true;
+      artifactsEl.innerHTML = '';
+      logEl.textContent = '';
+      setStatus('queued');
+      try {
+        const res = await fetch('/api/jobs', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ skill_name: skillSelect.value, arguments: argsInput.value })
+        });
+        if (!res.ok) throw new Error(await res.text());
+        const job = await res.json();
+        currentJobId = job.id;
+        jobIdEl.textContent = `job ${job.id}`;
+        connectEvents(job.id);
+      } catch (err) {
+        appendLog(`ERROR: ${err.message}`);
+        setStatus('failed');
+        runBtn.disabled = false;
+      }
+    }
+
+    function connectEvents(jobId) {
+      if (eventSource) eventSource.close();
+      eventSource = new EventSource(`/api/jobs/${jobId}/events`);
+      eventSource.addEventListener('log', event => appendLog(JSON.parse(event.data).line));
+      eventSource.addEventListener('status', event => {
+        const job = JSON.parse(event.data);
+        setStatus(job.status);
+        if (['succeeded', 'failed', 'canceled'].includes(job.status)) {
+          renderArtifacts(job);
+          runBtn.disabled = false;
+          cancelBtn.disabled = true;
+          eventSource.close();
+        }
+      });
+      eventSource.addEventListener('error', () => appendLog('日志连接中断或任务已结束。'));
+    }
+
+    async function cancelJob() {
+      if (!currentJobId) return;
+      await fetch(`/api/jobs/${currentJobId}/cancel`, { method: 'POST' });
+    }
+
+    skillSelect.addEventListener('change', updateSkillDesc);
+    runBtn.addEventListener('click', runJob);
+    cancelBtn.addEventListener('click', cancelJob);
+    loadSkills().catch(err => {
+      skillDesc.textContent = `加载失败：${err.message}`;
+      setStatus('failed');
+    });
+  </script>
+</body>
+</html>
