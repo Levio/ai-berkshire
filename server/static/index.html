@@ -37,7 +37,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.25);
     }
     label { display: block; color: var(--muted); font-size: 13px; margin-bottom: 8px; }
-    select, textarea, button {
+    select, textarea, input, button {
       width: 100%;
       border-radius: 10px;
       border: 1px solid var(--line);
@@ -76,7 +76,49 @@
     }
     .artifacts a { display: block; color: #fbbf24; margin: 8px 0; word-break: break-all; }
     .row { display: flex; gap: 10px; align-items: center; justify-content: space-between; margin-bottom: 12px; }
-    @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+    .history-card { margin-top: 20px; }
+    .history-card h2 { margin: 0; font-size: 22px; }
+    .history-grid { display: grid; grid-template-columns: minmax(260px, 360px) 1fr; gap: 16px; margin-top: 16px; }
+    .report-list {
+      max-height: 620px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #020617;
+      padding: 10px;
+    }
+    .report-group { margin: 12px 0 8px; color: var(--accent); font-weight: 700; font-size: 14px; }
+    .report-item {
+      width: 100%;
+      margin: 8px 0;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: rgba(15, 23, 42, .9);
+      color: var(--text);
+      text-align: left;
+      font-weight: 400;
+    }
+    .report-item.active { border-color: var(--accent); box-shadow: 0 0 0 1px rgba(245, 158, 11, .35); }
+    .report-title { display: block; font-weight: 700; margin-bottom: 5px; }
+    .report-meta { display: block; color: var(--muted); font-size: 12px; line-height: 1.45; word-break: break-all; }
+    .report-viewer {
+      min-height: 620px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #020617;
+      padding: 16px;
+      overflow: auto;
+    }
+    .report-viewer h3 { margin: 0 0 8px; }
+    .report-actions a { color: #fbbf24; }
+    .report-content {
+      height: auto;
+      max-height: 520px;
+      margin-top: 14px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+    }
+    @media (max-width: 820px) { .grid, .history-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -108,6 +150,21 @@
         <div class="artifacts" id="artifacts"></div>
       </section>
     </div>
+
+    <section class="card history-card">
+      <div class="row">
+        <h2>历史报告</h2>
+        <button id="refreshReportsBtn" class="secondary" style="max-width: 120px; margin-top: 0;">刷新</button>
+      </div>
+      <label for="reportSearch">搜索历史内容</label>
+      <input id="reportSearch" placeholder="搜索公司、行业、文件名、标题..." />
+      <div class="history-grid">
+        <div class="report-list" id="reportList">正在加载历史报告...</div>
+        <article class="report-viewer" id="reportViewer">
+          <p>选择左侧报告查看内容。</p>
+        </article>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -120,8 +177,14 @@
     const jobIdEl = document.getElementById('jobId');
     const logEl = document.getElementById('log');
     const artifactsEl = document.getElementById('artifacts');
+    const reportSearch = document.getElementById('reportSearch');
+    const refreshReportsBtn = document.getElementById('refreshReportsBtn');
+    const reportListEl = document.getElementById('reportList');
+    const reportViewerEl = document.getElementById('reportViewer');
 
     let skills = [];
+    let reports = [];
+    let selectedReportPath = null;
     let currentJobId = null;
     let eventSource = null;
 
@@ -150,6 +213,124 @@
         link.target = '_blank';
         artifactsEl.appendChild(link);
       }
+    }
+
+    function formatBytes(size) {
+      if (size < 1024) return `${size} B`;
+      if (size < 1024 * 1024) return `${(size / 1024).toFixed(1)} KB`;
+      return `${(size / 1024 / 1024).toFixed(1)} MB`;
+    }
+
+    function formatDate(value) {
+      try {
+        return new Intl.DateTimeFormat('zh-CN', {
+          year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit'
+        }).format(new Date(value));
+      } catch (_) {
+        return value;
+      }
+    }
+
+    async function loadReports() {
+      reportListEl.textContent = '正在加载历史报告...';
+      try {
+        const res = await fetch('/api/reports');
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        reports = data.reports || [];
+        renderReportList();
+      } catch (err) {
+        reportListEl.textContent = `加载失败：${err.message}`;
+      }
+    }
+
+    function filteredReports() {
+      const needle = reportSearch.value.trim().toLowerCase();
+      if (!needle) return reports;
+      return reports.filter(report => [report.path, report.name, report.group, report.title]
+        .join(' ')
+        .toLowerCase()
+        .includes(needle));
+    }
+
+    function renderReportList() {
+      const visible = filteredReports();
+      reportListEl.innerHTML = '';
+      if (reports.length === 0) {
+        reportListEl.textContent = '暂无历史报告。';
+        return;
+      }
+      if (visible.length === 0) {
+        reportListEl.textContent = '未找到匹配报告。';
+        return;
+      }
+
+      let currentGroup = '';
+      for (const report of visible) {
+        if (report.group !== currentGroup) {
+          currentGroup = report.group;
+          const group = document.createElement('div');
+          group.className = 'report-group';
+          group.textContent = currentGroup;
+          reportListEl.appendChild(group);
+        }
+
+        const item = document.createElement('button');
+        item.className = `report-item${report.path === selectedReportPath ? ' active' : ''}`;
+        item.type = 'button';
+        item.addEventListener('click', () => openReport(report.path));
+
+        const title = document.createElement('span');
+        title.className = 'report-title';
+        title.textContent = report.title || report.name;
+        const meta = document.createElement('span');
+        meta.className = 'report-meta';
+        meta.textContent = `${report.path} · ${formatBytes(report.size)} · ${formatDate(report.modified_at)}`;
+        item.appendChild(title);
+        item.appendChild(meta);
+        reportListEl.appendChild(item);
+      }
+    }
+
+    async function openReport(path) {
+      selectedReportPath = path;
+      renderReportList();
+      reportViewerEl.innerHTML = '<p>正在加载报告...</p>';
+      try {
+        const res = await fetch(`/api/reports/content?path=${encodeURIComponent(path)}`);
+        if (!res.ok) throw new Error(await res.text());
+        const data = await res.json();
+        renderReportContent(data.report, data.content);
+      } catch (err) {
+        reportViewerEl.textContent = `加载失败：${err.message}`;
+      }
+    }
+
+    function renderReportContent(report, content) {
+      reportViewerEl.innerHTML = '';
+      const title = document.createElement('h3');
+      title.textContent = report.title || report.name;
+      const meta = document.createElement('p');
+      meta.textContent = `${report.path} · ${formatBytes(report.size)} · ${formatDate(report.modified_at)}`;
+
+      const actions = document.createElement('p');
+      actions.className = 'report-actions';
+      const rawLink = document.createElement('a');
+      rawLink.href = `/api/reports/raw?path=${encodeURIComponent(report.path)}`;
+      rawLink.target = '_blank';
+      rawLink.rel = 'noopener';
+      rawLink.textContent = '打开原始 Markdown';
+      actions.appendChild(rawLink);
+
+      const body = document.createElement('pre');
+      body.className = 'report-content';
+      body.textContent = content;
+
+      reportViewerEl.appendChild(title);
+      reportViewerEl.appendChild(meta);
+      reportViewerEl.appendChild(actions);
+      reportViewerEl.appendChild(body);
     }
 
     async function loadSkills() {
@@ -203,6 +384,7 @@
         setStatus(job.status);
         if (['succeeded', 'failed', 'canceled'].includes(job.status)) {
           renderArtifacts(job);
+          loadReports();
           runBtn.disabled = false;
           cancelBtn.disabled = true;
           eventSource.close();
@@ -217,12 +399,15 @@
     }
 
     skillSelect.addEventListener('change', updateSkillDesc);
+    reportSearch.addEventListener('input', renderReportList);
+    refreshReportsBtn.addEventListener('click', loadReports);
     runBtn.addEventListener('click', runJob);
     cancelBtn.addEventListener('click', cancelJob);
     loadSkills().catch(err => {
       skillDesc.textContent = `加载失败：${err.message}`;
       setStatus('failed');
     });
+    loadReports();
   </script>
 </body>
 </html>
