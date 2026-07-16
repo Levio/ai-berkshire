@@ -44,7 +44,7 @@ RUN mkdir -p /app/reports /var/lib/ai-berkshire /home/appuser/.claude /home/appu
 
 USER appuser
 
-EXPOSE 8000
+EXPOSE 6913
 
 ENTRYPOINT ["/usr/bin/tini", "--", "/usr/local/bin/docker-entrypoint.sh"]
-CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "server.app:app", "--host", "0.0.0.0", "--port", "6913"]

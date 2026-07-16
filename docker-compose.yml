@@ -8,7 +8,7 @@ services:
       - path: .env.docker
         required: false
     ports:
-      - "8000:8000"
+      - "6913:6913"
     volumes:
       - ./reports:/app/reports
       - ai_berkshire_var:/var/lib/ai-berkshire
@@ -19,7 +19,7 @@ services:
     security_opt:
       - no-new-privileges:true
     healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:8000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:6913/health || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
